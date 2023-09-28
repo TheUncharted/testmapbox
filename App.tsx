@@ -1,20 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import mapboxgl from 'mapbox-gl';
+import React, { useRef } from 'react';
+import { StyleSheet } from 'react-native';
 
-export default function App() {
+import Mapbox from '@rnmapbox/maps';
+
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax
+mapboxgl.workerClass =
+  require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
+Mapbox.setAccessToken('pk');
+
+const App = () => {
+  const pointAnnotation = useRef<Mapbox.PointAnnotation>(null);
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Mapbox.MapView style={styles.map}>
+      <Mapbox.Camera
+        defaultSettings={{
+          centerCoordinate: [-74.00597, 40.71427],
+          zoomLevel: 12,
+        }}
+      />
+      <Mapbox.PointAnnotation
+        id="annotation"
+        coordinate={[-74.00597, 40.71427]}
+        title="test"
+        draggable
+        ref={pointAnnotation}
+      >
+        <Mapbox.Callout title="This is a sample loading a remote image" />
+      </Mapbox.PointAnnotation>
+    </Mapbox.MapView>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    height: 1920,
+    width: 480,
+  },
+  map: {
+    flex: 1,
   },
 });
